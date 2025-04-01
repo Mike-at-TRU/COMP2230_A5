@@ -4,21 +4,46 @@ package com.digiteched.javadsa;
 import com.digiteched.javadsa.interfaces.IMinHeap;
 
 public class LinkedMinHeap<T extends Comparable<T>> implements IMinHeap<T> {
+    class LinkedNode implements Comparable<LinkedNode> {
+        T data;
+
+        public LinkedNode(T data) {
+            this.data = data;
+        }
+
+        LinkedNode left;
+
+        LinkedNode right;
+
+
+
+        @Override
+        public int compareTo(LinkedNode that) {
+            return this.data.compareTo(that.data);
+        }
+    }
+    private int count = 0;
+    private LinkedNode root;
+
     @Override
     public int size() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'size'");
+        return count;
     }
 
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isEmpty'");
+     return count == 0;
     }
 
     @Override
     public void add(T element) {
-        // TODO Auto-generated method stub
+
+        LinkedNode nodeToAdd = new LinkedNode(element);
+        if(isEmpty()){
+            root = nodeToAdd;
+            count++;
+            return;
+        }
         throw new UnsupportedOperationException("Unimplemented method 'add'");
     }
 
@@ -30,8 +55,7 @@ public class LinkedMinHeap<T extends Comparable<T>> implements IMinHeap<T> {
 
     @Override
     public T getMin() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getMin'");
+      return root.data;
     }
 
 }
