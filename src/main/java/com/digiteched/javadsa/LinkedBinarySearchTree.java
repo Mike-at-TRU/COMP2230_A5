@@ -331,18 +331,22 @@ public class LinkedBinarySearchTree<T extends Comparable<T>> implements IBinaryS
         return current;
     }
 
+    // this will only work if the binary tree is a linked binary tree because the
+    // interface doesn't have inOrder
     public boolean equals(IBinarySearchTree<T> obj) {
 
-        if ((obj instanceof LinkedBinarySearchTree)) {
+        if ((obj instanceof LinkedBinarySearchTree<T>)) {
             LinkedBinarySearchTree<T> tree = (LinkedBinarySearchTree<T>) obj;
             if (tree == this) {
                 return true;
             }
 
             if ((tree.size() == count)) {
-                Iterator thatIterator = tree.inOrderIterator();
+                Iterator<T> thatIterator = tree.inOrderIterator();
 
                 for (T item : this) {
+                    // length is the same so we don't need to worry about tree running out of items
+                    // before us
                     if (item.compareTo((T) thatIterator.next()) != 0) {
                         return false;
                     }
