@@ -44,9 +44,9 @@ public class LinkedMinHeap<T extends Comparable<T>> implements IMinHeap<T> {
         LinkedNode nodeToAdd = new LinkedNode(element);
         if(isEmpty()){
             root = nodeToAdd;
-            count++;
             lastNodeAdded = nodeToAdd;
-            return;
+            count++;
+            return; //no need to bubble up
         }
         LinkedNode nodeToAddTo = nodeToAddTo();
         if (nodeToAddTo.left == null){
@@ -91,6 +91,17 @@ public class LinkedMinHeap<T extends Comparable<T>> implements IMinHeap<T> {
 throw new UnsupportedOperationException("I have no idea what I'm doing");
 }
 private void bubbleUp(LinkedNode node){
-throw new UnsupportedOperationException("Bubble up no workie yet");
+        if(node == root){
+            return;
+        }
+        if(node.parent.compareTo(node) < 0 || node.parent.compareTo(node) > 0){
+       //todo make sure this is the right comparison
+            //todo swap children and make the node's parent it's grandparent and the old parents parent to be itself
+
+            throw new UnsupportedOperationException("Bubble up no workie yet");
+            //why am I getting an assertion error and not this one?
+
+        }
+
 }
 }
