@@ -108,7 +108,7 @@ public class LinkedMinHeap<T extends Comparable<T>> implements IMinHeap<T> {
                 LinkedNode temp = node.right;
 
             }
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Bubble down not implemented");
         }
     }
 
