@@ -1,9 +1,15 @@
 package com.digiteched.javadsa;
 
+import java.util.ArrayDeque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 import com.digiteched.javadsa.LinkedBinarySearchTree.LinkedBinaryNode;
 import com.digiteched.javadsa.interfaces.IMinHeap;
 
 public class LinkedMinHeap<T extends Comparable<T>> implements IMinHeap<T> {
+    // I don't know why this works but it does
     class LinkedNode implements Comparable<LinkedNode> {
         T data;
 
@@ -57,163 +63,152 @@ public class LinkedMinHeap<T extends Comparable<T>> implements IMinHeap<T> {
         }
         nodeToAdd.parent = nodeToAddTo;
         count++;
-        bubbleUp(nodeToAdd);
+        lastNodeAdded = nodeToAdd;
+        bubbleUp();
     }
 
     @Override
     public T removeMin() {
-        // TODO Auto-generated method stub
         T temp = root.data;
-        lastNodeAdded.left = root.left;
-        lastNodeAdded.right = root.right;
-        root = lastNodeAdded;
-        if (root.left != null) {
-            root.left.parent = root;
+        if (count == 1) {
+            root = null;
+            count--;
+            lastNodeAdded = null;
+            return temp;
         }
-        if (root.right != null) {
-            root.right.parent = root;
-        }
-        root.parent = null;
-        bubbleDown(root);
+        root.data = lastNodeAdded.data;
+
+        plinkoDown();
+        count--;
+
         return temp; // expects 1 got 3
     }
 
-    private void bubbleDown(LinkedNode node) {
-        if (node.left == null || node.right == null) { // we know we are at the bottom, either one child left or no
-                                                       // child
-            if (node.right != null) { // this would mean left is null and I fucked something up
-                throw new UnsupportedOperationException("I think I fucked up");
-            }
+    // private LinkedNode getNewLastNode() {
+    // LinkedNode result = lastNodeAdded;
+    // while (result != root && result.parent.left == result) {
+    // result = result.parent;
+    // }
+    // if (result != root) {
+    // result = result.parent.left;
+    // }
+    // while (result.right != null) {
+    // result = result.right;
+    // }
 
-            if (node.left != null) {
-                if (node.compareTo(node.left) > 0) {
-                    // we know left shouldn't have children since we only have one
-                    LinkedNode newParent = node.left;
-                    node.left = null;
-                    newParent.left = node;
-                    newParent.parent = node.parent;
-                    node.parent = newParent;
+    // return result;
 
-                    if (root == node) {
-                        root = newParent;
-                    }
+    // }
 
-                }
-                return;
-            }
-            return; // if we get here they both were null and we are a leaf
+    private void plinkoDown() {
+        LinkedNode node = root;
+        LinkedNode next = nextToComparePlinko(node);
+
+        T temp = node.data;
+
+        while (next != null && next.data.compareTo(temp) < 0) {
+            node.data = next.data;
+            node = next;
+
+            next = nextToComparePlinko(node);
         }
-        if (node.compareTo(node.left) > 0 || node.compareTo(node.right) > 0) { // assuming I got the < right we know a
-                                                                               // child is lower
-            if (node.left.compareTo(node.right) < 0) { // the right is smaller ? why didn't I make another custom method
-                                                       // for this?
-                LinkedNode newParent = node.right;
-                node.right = newParent.right;
-                newParent.right = node;
-                LinkedNode tempLeft = node.left;
-                node.left = newParent.left;
-                newParent.left = tempLeft;
-                newParent.parent = node.parent;
-                node.parent = newParent;
 
-                if (root == node) {
-                    root = newParent;
-                }
-                bubbleDown(node);
-                return;
-            } else {
-                LinkedNode newParent = node.left;
-                node.left = newParent.left;
-                newParent.left = node;
-                LinkedNode tempRight = node.right;
-                node.right = newParent.right;
-                newParent.right = tempRight;
-                newParent.parent = node.parent;
-                node.parent = newParent;
-                if (root == node) {
-                    root = newParent;
-                }
-                bubbleDown(node);
-            }
+        node.data = temp;
 
+    }
+
+    private LinkedNode nextToComparePlinko(LinkedNode node) {
+        LinkedNode left = node.left;
+        LinkedNode right = node.right;
+
+        if (left == null && right == null) {
+            return null;
+        } else if (right == null) {
+            return left;
+        } else if (left.data.compareTo(right.data) < 0) {
+            return left;
+        } else {
+            return right;
         }
-        // throw new UnsupportedOperationException("Bubble down not implemented");
+    }
+
+    private boolean aChildIsSmaller(LinkedNode node) {
+        return node.compareTo(node.left) > 0 || node.compareTo(node.right) > 0;
     }
 
     @Override
     public T getMin() {
+        if (root == null) {
+            throw new UnsupportedOperationException(
+                    "How am I supposed to get nothing? come on add something to me first");
+        }
         return root.data;
     }
 
     private LinkedNode nodeToAddTo() {
-        return nodeToAddTo(lastNodeAdded);
-    }
-
-    private LinkedNode nodeToAddTo(LinkedNode lastNodeChecked) {
-        if (lastNodeChecked == root) {
-            // we have either gone all the way up and need to go left, or we started here
-            if (lastNodeChecked.left == null || lastNodeChecked.right == null) {
-                return root; // we are adding to the root
-            }
-            // we know we were brought all the way up time to go all the way down
-            return asFarLeft(root);
-        }
-        LinkedNode parent = lastNodeChecked.parent;
-        if (parent.left == lastNodeChecked) {
-            return nodeToAddTo(parent);
-        }
-        return asFarLeft(parent.right);
-    }
-
-    private void bubbleUp(LinkedNode node) {
+        LinkedNode node = lastNodeAdded;
         if (node == root) {
-            return;
+            return root;
         }
-        if (node.parent.compareTo(node) > 0) { // parent bigger than child
 
-            LinkedNode tempOldParent = node.parent;
-            if (tempOldParent.left == node) {
-                // we know we were the left child
-                tempOldParent.left = node.left;
-                if (tempOldParent.left != null) {
-                    tempOldParent.left.parent = tempOldParent;
-                }
-                LinkedNode tempChild = tempOldParent.right;
-                if (tempChild != null) {
-                    tempChild.parent = node;
-                }
-                node.parent = tempOldParent.parent;
-                tempOldParent.parent = node;
-                node.left = tempOldParent;
-                if (tempOldParent == root) {
-                    root = node;
-                }
-                return;
-            }
-            // we know we were the right child
-            tempOldParent.right = node.right;
-            if (tempOldParent.right != null) {
-                tempOldParent.right.parent = tempOldParent;
-            }
-            LinkedNode tempChild = tempOldParent.left;
-            if (tempChild != null) {
-                tempChild.parent = node;
-            }
-            node.parent = tempOldParent.parent;
-            tempOldParent.parent = node;
-            node.right = tempOldParent;
-            if (tempOldParent == root) {
-                root = node;
-            }
-
+        while (node != root && node.parent.left != node) {
+            node = node.parent;
         }
+        if (node != root) {
+            if (node.parent.right == null) {
+                return node.parent;
+            } else {
+                node = asFarLeft(node.parent.right);
+            }
+        } else { // full tree
+            node = asFarLeft(node);
+        }
+        return node;
+    }
+
+    private void bubbleUp() {
+        LinkedNode node = lastNodeAdded;
+
+        T temp = node.data;
+        while (node != root && temp.compareTo(node.parent.data) < 0) {
+            node.data = node.parent.data;
+            node = node.parent;
+        }
+        node.data = temp;
 
     }
 
     private LinkedNode asFarLeft(LinkedNode node) {
-        if (node.left == null) {
-            return node;
+        while (node.left != null) {
+            node = node.left;
         }
-        return asFarLeft(node.left);
+        return node;
+    }
+
+    public String toString() {
+        String result = "";
+        Queue<LinkedNode> q = new ArrayDeque<LinkedNode>();
+        q.add(root);
+        List<T> l = new LinkedList<T>();
+        while (!q.isEmpty()) {
+            LinkedNode next = q.remove();
+            if (next.left != null) {
+                q.add(next.left);
+            }
+            if (next.right != null) {
+                q.add(next.right);
+            }
+            l.add(next.data);
+        }
+
+        for (int i = 0; i < l.size(); i++) {
+            if ((Math.log(i) / Math.log(2)) == 0) {
+                result += "\n";
+            }
+            result += (l.get(i) + " ");
+        }
+        result += "\n";
+
+        return result;
     }
 }
