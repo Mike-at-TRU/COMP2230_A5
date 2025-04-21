@@ -3,9 +3,47 @@ package com.digiteched.javadsa;
 import java.util.Iterator;
 import java.util.List;
 
+import com.digiteched.javadsa.exceptions.FailedToAddNonAlphabetValueToTry;
 import com.digiteched.javadsa.interfaces.ITrie;
 
 public class Trie implements ITrie {
+    private int startOfLowerCaseIndex = 97;
+    private int endOfLowerCaseIndex = 122;
+
+    private class Node {
+        private char letter;
+
+        private Node[] children = new Node[26];
+
+        private boolean isEndOfWord = false;
+
+        public Node(char letter) {
+            if (letter >= startOfLowerCaseIndex && letter <= endOfLowerCaseIndex) {
+
+                this.letter = letter;
+            } else {
+                if (letter == ' ') {
+                    throw new FailedToAddNonAlphabetValueToTry(letter + " (space)");
+                }
+                throw new FailedToAddNonAlphabetValueToTry(letter);
+            }
+
+        }
+
+        // this will only be used for the root
+        public Node() {
+
+        }
+
+        public void isEndOfWord() {
+            isEndOfWord = true;
+        }
+
+    }
+
+    private int numberOfWords = 0;
+    private Node root = new Node();
+
     @Override
     public Iterator<String> iterator() {
         // TODO Auto-generated method stub
@@ -14,26 +52,58 @@ public class Trie implements ITrie {
 
     @Override
     public ITrie add(String word) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'add'");
+        Node node = root;
+        word = word.toLowerCase(); // I've decided not to remove white space
+        for (char letter : word.toCharArray()) {
+            if (letter >= startOfLowerCaseIndex && letter <= endOfLowerCaseIndex) {
+
+                if (node.children[letter - startOfLowerCaseIndex] == null) {
+                    node.children[letter - startOfLowerCaseIndex] = new Node(letter);
+                }
+            } else {
+                if (letter == ' ') {
+                    throw new FailedToAddNonAlphabetValueToTry(letter + " (space)");
+                }
+                throw new FailedToAddNonAlphabetValueToTry(letter);
+            }
+
+            node = node.children[letter - startOfLowerCaseIndex];
+        }
+        node.isEndOfWord();
+
+        numberOfWords++;
+        return this;
     }
 
     @Override
     public int size() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'size'");
+        return numberOfWords;
     }
 
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isEmpty'");
+        return numberOfWords == 0;
     }
 
     @Override
     public boolean has(String word) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'has'");
+        if (isEmpty()) {
+            return false;
+        }
+        Node node = root;
+
+        word = word.toLowerCase();
+        for (char letter : word.toCharArray()) {
+            if (!(letter >= startOfLowerCaseIndex && letter <= endOfLowerCaseIndex)) {
+                return false; // just to make sure not to get an index out of bounds error
+            }
+            if (node.children[letter - startOfLowerCaseIndex] == null) {
+                return false;
+            }
+            node = node.children[letter - startOfLowerCaseIndex];
+        }
+
+        return node.isEndOfWord;
     }
 
     @Override
