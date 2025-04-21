@@ -1,8 +1,12 @@
 package com.digiteched.javadsa;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 import com.digiteched.javadsa.exceptions.FailedToAddNonAlphabetValueToTrie;
 import com.digiteched.javadsa.interfaces.ITrie;
@@ -47,8 +51,15 @@ public class Trie implements ITrie {
 
     @Override
     public Iterator<String> iterator() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(root);
+        List<String> words = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            Node next = queue.remove();
+
+        }
+
+        return words.iterator();
     }
 
     @Override
