@@ -3,7 +3,7 @@ package com.digiteched.javadsa;
 import java.util.Iterator;
 import java.util.List;
 
-import com.digiteched.javadsa.exceptions.FailedToAddNonAlphabetValueToTry;
+import com.digiteched.javadsa.exceptions.FailedToAddNonAlphabetValueToTrie;
 import com.digiteched.javadsa.interfaces.ITrie;
 
 public class Trie implements ITrie {
@@ -23,9 +23,9 @@ public class Trie implements ITrie {
                 this.letter = letter;
             } else {
                 if (letter == ' ') {
-                    throw new FailedToAddNonAlphabetValueToTry(letter + " (space)");
+                    throw new FailedToAddNonAlphabetValueToTrie(letter + " (space)");
                 }
-                throw new FailedToAddNonAlphabetValueToTry(letter);
+                throw new FailedToAddNonAlphabetValueToTrie(letter);
             }
 
         }
@@ -62,9 +62,9 @@ public class Trie implements ITrie {
                 }
             } else {
                 if (letter == ' ') {
-                    throw new FailedToAddNonAlphabetValueToTry(letter + " (space)");
+                    throw new FailedToAddNonAlphabetValueToTrie(letter + " (space)");
                 }
-                throw new FailedToAddNonAlphabetValueToTry(letter);
+                throw new FailedToAddNonAlphabetValueToTrie(letter);
             }
 
             node = node.children[letter - startOfLowerCaseIndex];

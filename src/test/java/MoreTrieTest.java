@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.digiteched.javadsa.Trie;
-import com.digiteched.javadsa.exceptions.FailedToAddNonAlphabetValueToTry;
+import com.digiteched.javadsa.exceptions.FailedToAddNonAlphabetValueToTrie;
 import com.digiteched.javadsa.interfaces.ITrie;
 
 public class MoreTrieTest {
@@ -13,11 +13,11 @@ public class MoreTrieTest {
     @Test
     public void itShouldOnlyAcceptAlhabet() {
         ITrie trie = new Trie();
-        assertThrows(FailedToAddNonAlphabetValueToTry.class, () -> {
+        assertThrows(FailedToAddNonAlphabetValueToTrie.class, () -> {
             trie.add("This Is A W0Rd");
         }); // the ' ' should be gone
 
-        assertThrows(FailedToAddNonAlphabetValueToTry.class, () -> {
+        assertThrows(FailedToAddNonAlphabetValueToTrie.class, () -> {
             trie.add("W0Rd");
         }); // the '0' should be gone
         assertThrows(NullPointerException.class, () -> {
