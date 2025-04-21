@@ -1,5 +1,6 @@
 package com.digiteched.javadsa;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -108,8 +109,28 @@ public class Trie implements ITrie {
 
     @Override
     public List<String> getCompletions(String prefix) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCompletions'");
+        List<String> words = new ArrayList<>();
+        Node node = root;
+        String currentWord = "";
+
+        // make sure the prefix is valid
+        for (char letter : prefix.toCharArray()) {
+            if (!(letter >= startOfLowerCaseIndex && letter <= endOfLowerCaseIndex)) {
+                return words; // I didn't want to make a new exception although I think should so I'm just
+                              // returning an empty list
+            }
+            if (node.children[letter - startOfLowerCaseIndex] != null) {
+                currentWord += node.letter;
+                node = node.children[letter - startOfLowerCaseIndex];
+            } else {
+                return words;
+            }
+        }
+        if (node.isEndOfWord) {
+            words.add(currentWord);
+        }
+
+        return words;
     }
 
 }
