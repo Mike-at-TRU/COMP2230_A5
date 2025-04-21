@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 import com.digiteched.javadsa.exceptions.FailedToAddNonAlphabetValueToTrie;
 import com.digiteched.javadsa.interfaces.ITrie;
@@ -21,6 +22,8 @@ public class Trie implements ITrie {
         private Node[] children = new Node[26];
 
         private boolean isEndOfWord = false;
+
+        private Node parent;
 
         public Node(char letter) {
             if (letter >= startOfLowerCaseIndex && letter <= endOfLowerCaseIndex) {
@@ -40,7 +43,7 @@ public class Trie implements ITrie {
 
         }
 
-        public void isEndOfWord() {
+        public void setToEndOfWord() {
             isEndOfWord = true;
         }
 
@@ -54,9 +57,34 @@ public class Trie implements ITrie {
         Queue<Node> queue = new ArrayDeque<>();
         queue.add(root);
         List<String> words = new ArrayList<>();
+        List<Node> endingWords = new ArrayList<>();
         while (!queue.isEmpty()) {
             Node next = queue.remove();
+            for (Node child : next.children) {
+                if (child != null) {
+                    queue.add(child);
+                }
+            }
+            if (next.isEndOfWord) {
+                endingWords.add(next);
+            }
 
+        }
+
+        for (Node node : endingWords) {
+            Stack<Node> stack = new Stack<>();
+
+            Node temp = node;
+
+            while (temp != root) {
+                stack.push(temp);
+                temp = temp.parent;
+            }
+            String word = "";
+            while (!stack.isEmpty()) {
+                word += stack.pop().letter;
+            }
+            words.add(word);
         }
 
         return words.iterator();
@@ -65,12 +93,13 @@ public class Trie implements ITrie {
     @Override
     public ITrie add(String word) {
         Node node = root;
-        word = word.toLowerCase(); // I've decided not to remove white space
+        word = word.toLowerCase(); // I've decided not to remove white space, instead we just get an exception
         for (char letter : word.toCharArray()) {
             if (letter >= startOfLowerCaseIndex && letter <= endOfLowerCaseIndex) {
 
                 if (node.children[letter - startOfLowerCaseIndex] == null) {
                     node.children[letter - startOfLowerCaseIndex] = new Node(letter);
+                    node.children[letter - startOfLowerCaseIndex].parent = node;
                 }
             } else {
                 if (letter == ' ') {
@@ -81,7 +110,7 @@ public class Trie implements ITrie {
 
             node = node.children[letter - startOfLowerCaseIndex];
         }
-        node.isEndOfWord();
+        node.setToEndOfWord();
 
         numberOfWords++;
         return this;
@@ -127,8 +156,7 @@ public class Trie implements ITrie {
         // make sure the prefix is valid
         for (char letter : prefix.toCharArray()) {
             if (!(letter >= startOfLowerCaseIndex && letter <= endOfLowerCaseIndex)) {
-                return words; // I didn't want to make a new exception although I think should so I'm just
-                              // returning an empty list
+                return words; // I didn't want to make a new exception although I think I should
             }
             if (node.children[letter - startOfLowerCaseIndex] != null) {
                 currentWord += node.letter;
@@ -137,8 +165,40 @@ public class Trie implements ITrie {
                 return words;
             }
         }
-        if (node.isEndOfWord) {
+        if (node.isEndOfWord) { // if prefix is a word then add it
             words.add(currentWord);
+        }
+
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(node);
+        List<Node> endingWords = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            Node next = queue.remove();
+            for (Node child : next.children) {
+                if (child != null) {
+                    queue.add(child);
+                }
+            }
+            if (next.isEndOfWord) {
+                endingWords.add(next);
+            }
+
+        }
+
+        for (Node nodeInEndingWords : endingWords) {
+            Stack<Node> stack = new Stack<>();
+
+            Node temp = nodeInEndingWords;
+
+            while (temp != root) {
+                stack.push(temp);
+                temp = temp.parent;
+            }
+            String word = "";
+            while (!stack.isEmpty()) {
+                word += stack.pop().letter;
+            }
+            words.add(word);
         }
 
         return words;

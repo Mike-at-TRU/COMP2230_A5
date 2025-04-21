@@ -9,7 +9,7 @@ public class Main {
         // SearchAndSort.heapSort(numbers);
 
         Trie trie = new Trie();
-
+        System.out.println("before adding values");
         for (String string : trie) {
             System.out.println(string);
         }
@@ -17,6 +17,12 @@ public class Main {
         trie.add("apple").add("ant").add("and").add("antler").add("bull").add("bully").add("bullhorn").add("bulldozer")
                 .add("bullshit");
 
+        System.out.println("\nafter adding values");
+        for (String string : trie) {
+            System.out.println(string);
+        }
+
+        System.out.println("\nbul complitions");
         trie.getCompletions("bul").forEach((completion) -> {
             System.out.println(completion);
         });
