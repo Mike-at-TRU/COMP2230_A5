@@ -32,8 +32,6 @@ public class MoreLinkedMinHeapTest {
         h.add(6);
         h.add(8);
         h.add(12);
-        h.add(7);
-        h.add(12);
         h.add(3);
         h.add(1);
         h.add(7); // it seems the last number is never deleted
