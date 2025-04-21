@@ -188,7 +188,9 @@ public class LinkedMinHeap<T extends Comparable<T>> implements IMinHeap<T> {
     public String toString() {
         String result = "";
         Queue<LinkedNode> q = new ArrayDeque<LinkedNode>();
-        q.add(root);
+        if (root != null) {
+            q.add(root);
+        }
         List<T> l = new LinkedList<T>();
         while (!q.isEmpty()) {
             LinkedNode next = q.remove();
