@@ -80,25 +80,33 @@ public class LinkedMinHeap<T extends Comparable<T>> implements IMinHeap<T> {
 
         plinkoDown();
         count--;
+        LinkedNode oldLastNode = lastNodeAdded;
+        lastNodeAdded = getNewLastNode();
+
+        if (oldLastNode.parent.right == oldLastNode) {
+            oldLastNode.parent.right = null;
+        } else {
+            oldLastNode.parent.left = null;
+        }
 
         return temp; // expects 1 got 3
     }
 
-    // private LinkedNode getNewLastNode() {
-    // LinkedNode result = lastNodeAdded;
-    // while (result != root && result.parent.left == result) {
-    // result = result.parent;
-    // }
-    // if (result != root) {
-    // result = result.parent.left;
-    // }
-    // while (result.right != null) {
-    // result = result.right;
-    // }
+    private LinkedNode getNewLastNode() {
+        LinkedNode result = lastNodeAdded;
+        while (result != root && result.parent.left == result) {
+            result = result.parent;
+        }
+        if (result != root) {
+            result = result.parent.left;
+        }
+        while (result.right != null) {
+            result = result.right;
+        }
 
-    // return result;
+        return result;
 
-    // }
+    }
 
     private void plinkoDown() {
         LinkedNode node = root;
